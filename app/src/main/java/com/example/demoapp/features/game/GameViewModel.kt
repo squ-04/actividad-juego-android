@@ -26,7 +26,12 @@ data class GameUiState(
 
 class GameViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(GameUiState())
+    companion object {
+        const val TOTAL_ATTEMPTS = 16
+        const val MAX_SCORE_PER_PAIR = 100 // Puntaje máximo por par
+    }
+
+    private val _uiState = MutableStateFlow(GameUiState(attempts = TOTAL_ATTEMPTS))
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
     private val animals = listOf("🦊", "🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐼")
@@ -42,7 +47,7 @@ class GameViewModel : ViewModel() {
             .mapIndexed { index, animal ->
                 MemoryCardState(id = index, content = animal)
             }
-        _uiState.value = GameUiState(cards = gameCards)
+        _uiState.value = GameUiState(cards = gameCards, attempts = TOTAL_ATTEMPTS)
         flippedCards.clear()
     }
 
@@ -84,21 +89,27 @@ class GameViewModel : ViewModel() {
                 val newCards = state.cards.map {
                     if (it.id == card1Id || it.id == card2Id) it.copy(isMatched = true) else it
                 }
+                
+                // Aplicamos la fórmula: Puntaje = (R / T) * M
+                // R = intentos restantes, T = intentos totales, M = puntaje máximo por par
+                val pointsForPair = (state.attempts.toDouble() / TOTAL_ATTEMPTS * MAX_SCORE_PER_PAIR).toInt()
+                
                 state.copy(
                     cards = newCards,
-                    score = state.score + 10,
+                    score = state.score + pointsForPair,
                     isVictory = newCards.all { it.isMatched }
                 )
             }
         } else {
             // No es un par
             _uiState.update { state ->
+                val newAttempts = state.attempts - 1
                 state.copy(
                     cards = state.cards.map {
                         if (it.id == card1Id || it.id == card2Id) it.copy(isFlipped = false) else it
                     },
-                    attempts = state.attempts - 1,
-                    isGameOver = state.attempts - 1 <= 0
+                    attempts = newAttempts,
+                    isGameOver = newAttempts <= 0
                 )
             }
         }

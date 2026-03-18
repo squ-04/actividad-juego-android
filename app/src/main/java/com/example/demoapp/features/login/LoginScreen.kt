@@ -26,8 +26,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.demoapp.core.components.ButtonDemo
-import com.example.demoapp.core.components.PasswordFieldDemo
-import com.example.demoapp.core.components.TextFieldDemo
 import com.example.demoapp.core.utils.RequestResult
 import kotlinx.coroutines.delay
 
