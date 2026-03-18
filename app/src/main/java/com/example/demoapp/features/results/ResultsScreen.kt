@@ -22,6 +22,8 @@ fun ResultsScreen(
     username: String,
     score: Int
 ) {
+    viewModel.score=score
+    viewModel.userName=username
 
     Column(
         modifier = Modifier
