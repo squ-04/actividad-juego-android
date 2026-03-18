@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.demoapp.features.game.GameScreen
 import com.example.demoapp.features.home.HomeScreen
+import com.example.demoapp.features.results.ResultsScreen
 
 @Composable
 fun AppNavigation() {
@@ -33,12 +34,21 @@ fun AppNavigation() {
            composable<MainRoutes.Game> {
                val args = it.toRoute<MainRoutes.Game>()
                GameScreen(
-                   username = args.username
+                   username = args.username,
+                   onNavigateToResults = { user, score ->
+                       navController.navigate(MainRoutes.Results(user, score)) {
+                           popUpTo(MainRoutes.Game(args.username)) { inclusive = true }
+                       }
+                   }
                )
            }
 
            composable<MainRoutes.Results> {
-
+               val args = it.toRoute<MainRoutes.Results>()
+               ResultsScreen(
+                   username = args.username,
+                   score = args.score
+               )
            }
 
        }

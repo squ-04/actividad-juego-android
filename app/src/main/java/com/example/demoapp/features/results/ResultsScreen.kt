@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun ResultsScreen(
     viewModel: ResultsViewModel = viewModel(),
-    userName: String,
+    username: String,
     score: Int
 ) {
 

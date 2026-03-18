@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,9 +22,16 @@ import com.example.demoapp.core.components.MemoryCard
 @Composable
 fun GameScreen(
     viewModel: GameViewModel = viewModel(),
-    username: String
+    username: String,
+    onNavigateToResults: (String, Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.isGameOver, uiState.isVictory) {
+        if (uiState.isGameOver || uiState.isVictory) {
+            onNavigateToResults(username, uiState.score)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -84,14 +92,6 @@ fun GameScreen(
             // Bottom Section: Attempts
             AttemptsSection(attempts = uiState.attempts)
         }
-
-        // Overlay for Game Over or Victory
-        if (uiState.isGameOver || uiState.isVictory) {
-            GameStateOverlay(
-                isVictory = uiState.isVictory,
-                onRestart = { viewModel.resetGame() }
-            )
-        }
     }
 }
 
@@ -128,46 +128,6 @@ fun AttemptsSection(attempts: Int) {
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
-        }
-    }
-}
-
-@Composable
-fun GameStateOverlay(isVictory: Boolean, onRestart: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.7f)),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            modifier = Modifier.padding(32.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = if (isVictory) "¡Felicidades!" else "¡Fin del Juego!",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isVictory) Color(0xFF4CAF50) else Color.Red
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = if (isVictory) "Has encontrado todos los pares." else "Te has quedado sin intentos.",
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = onRestart,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
-                ) {
-                    Text(text = "Jugar de nuevo", color = Color.White)
-                }
-            }
         }
     }
 }
