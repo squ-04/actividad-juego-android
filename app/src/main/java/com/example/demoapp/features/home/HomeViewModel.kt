@@ -1,5 +1,8 @@
 package com.example.demoapp.features.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.demoapp.core.utils.ValidatedField
 
@@ -13,6 +16,9 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    var showHelpDialog by mutableStateOf(false)
+        private set
+
     val isFormValid: Boolean
         get() = userName.isValid
 
@@ -22,5 +28,13 @@ class HomeViewModel : ViewModel() {
         } else {
             userName.onChange(userName.value) // Trigger error display
         }
+    }
+
+    fun onShowHelpDialog() {
+        showHelpDialog = true
+    }
+
+    fun onDismissHelpDialog() {
+        showHelpDialog = false
     }
 }

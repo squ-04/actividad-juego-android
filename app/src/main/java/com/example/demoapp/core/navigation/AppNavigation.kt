@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.demoapp.features.game.GameScreen
 import com.example.demoapp.features.home.HomeScreen
 
 @Composable
@@ -31,9 +32,9 @@ fun AppNavigation() {
 
            composable<MainRoutes.Game> {
                val args = it.toRoute<MainRoutes.Game>()
-               /*GameScreen(
+               GameScreen(
                    username = args.username
-               )*/
+               )
            }
 
            composable<MainRoutes.Results> {
