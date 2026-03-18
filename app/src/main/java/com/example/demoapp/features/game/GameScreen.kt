@@ -20,7 +20,8 @@ import com.example.demoapp.core.components.MemoryCard
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel = viewModel()
+    viewModel: GameViewModel = viewModel(),
+    username: String
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
