@@ -47,7 +47,12 @@ fun AppNavigation() {
                val args = it.toRoute<MainRoutes.Results>()
                ResultsScreen(
                    username = args.username,
-                   score = args.score
+                   score = args.score,
+                   onPlayAgain = {
+                       navController.navigate(MainRoutes.Home) {                // Limpia el historial para que no pueda volver atrás a los resultados
+                           popUpTo(MainRoutes.Home) { inclusive = true }
+                       }
+                   }
                )
            }
 

@@ -1,77 +1,130 @@
 package com.example.demoapp.features.results
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.demoapp.core.components.ButtonDemo
 
 @Composable
 fun ResultsScreen(
     viewModel: ResultsViewModel = viewModel(),
     username: String,
-    score: Int
+    score: Int,
+    onPlayAgain: () -> Unit
 ) {
-    viewModel.score=score
-    viewModel.userName=username
+    viewModel.score = score
+    viewModel.userName = username
 
-    Column(
+    val isWinner = viewModel.isWinner()
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color(0xFFE3F2FD), Color.White)
+                )
+            )
     ) {
-        Text(
-            text = "¡Hola, ${viewModel.userName}!",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Icono de Resultado
+            Box(
+                modifier = Modifier
+                    .size(160.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (isWinner) Icons.Default.EmojiEvents else Icons.Default.SentimentVeryDissatisfied,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    tint = if (isWinner) Color(0xFFFFC107) else Color(0xFFD32F2F)
+                )
+            }
 
-        if (viewModel.isWinner()) {
-            Icon(
-                imageVector = Icons.Default.EmojiEvents,
-                contentDescription = "Trofeo de victoria",
-                modifier = Modifier.size(100.dp),
-                tint = Color(0xFFFFD700) // Color dorado
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+
             Text(
-                text = "¡Felicidades, ganaste!",
-                fontSize = 20.sp,
-                color = Color.Green
+                text = if (isWinner) "¡VICTORIA!" else "¡Sigue intentando!",
+                style = MaterialTheme.typography.displaySmall.copy(
+                    color = if (isWinner) Color(0xFF1565C0) else Color(0xFFD32F2F),
+                    fontWeight = FontWeight.ExtraBold
+                ),
+                textAlign = TextAlign.Center
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = "Tu puntaje es: ${viewModel.score}",
-                fontSize = 18.sp
+                text = username,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium
+                ),
+                textAlign = TextAlign.Center
             )
-        } else {
-            Icon(
-                imageVector = Icons.Default.SentimentVeryDissatisfied,
-                contentDescription = "Icono de derrota",
-                modifier = Modifier.size(100.dp),
-                tint = Color.Red
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Lo sentimos, perdiste el juego.",
-                fontSize = 20.sp,
-                color = Color.Red
-            )
-            Text(
-                text = "Tu puntaje es: 0",
-                fontSize = 18.sp
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Tarjeta de Puntaje
+            Card(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(8.dp),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Puntaje Final",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "$score",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            color = Color(0xFF1976D2),
+                            fontWeight = FontWeight.Black
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Botón para volver a jugar
+            ButtonDemo(
+                icon = Icons.Default.Refresh,
+                contentDescription = "Volver a jugar",
+                onClick = onPlayAgain,
+                text = "VOLVER A JUGAR"
             )
         }
     }
